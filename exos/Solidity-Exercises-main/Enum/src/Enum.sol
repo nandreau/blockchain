@@ -17,7 +17,13 @@ contract ExampleEnum {
         Sunday
     }
 
-    function isWeekend(uint256 index) public pure returns (bool) {
-        // your code here
+ function isWeekend(uint256 index) public pure returns (bool) {
+        require(index <= uint256(DayOfWeek.Sunday), "Invalid index");
+
+        if (index == uint256(DayOfWeek.Saturday) || index == uint256(DayOfWeek.Sunday)) {
+            return true;
+        }
+
+        return false;
     }
 }
