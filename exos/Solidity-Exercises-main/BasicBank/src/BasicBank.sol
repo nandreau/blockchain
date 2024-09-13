@@ -2,10 +2,23 @@
 pragma solidity ^0.8.13;
 
 contract BasicBank {
-    /// @notice deposit ether into the contract
-    /// @dev it should work properly when called multiple times
-    function addEther() external payable {}
+    mapping(address => uint256) private balances;
 
-    /// @notice used to withdraw ether from the contract (No restriction on withdrawals)
-    function removeEther(uint256 amount) external payable {}
+    function addEther() external payable {
+        require(msg.value > 0, "You must send some ether");
+        balances[msg.sender] += msg.value;
+    }
+
+    function removeEther(uint256 amount) external payable {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+
+        balances[msg.sender] -= amount;
+
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Transfer failed.");
+    }
+
+    function getBalance() external view returns (uint256) {
+        return balances[msg.sender];
+    }
 }
